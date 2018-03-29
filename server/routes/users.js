@@ -87,6 +87,65 @@ function router() {
       }
     })
   })
+
+  //购物车删除
+  router.post('/cart/del',(req, res, next) => {
+    "use strict";
+    var userId = req.cookies.userId, productId = req.body.productId;
+    User.update({
+        userId:userId
+      }, {
+        $pull: {
+          'cartList': {
+            'productId': productId
+          }
+        }
+      }, (err, doc) => {
+        if (err) {
+          console.log(err);
+          res.json({
+            status: "1",
+            message: err.message,
+            result: ''
+          })
+        } else {
+          res.json({
+            status: "0",
+            message: '',
+            result: 'suc'
+          })
+        }
+      })
+  });
+
+  //购物车编辑
+  router.post('/cart/edit',(req, res, next) => {
+    "use strict";
+    var userId = req.cookies.userId;
+    var productId = req.body.productId;
+    var productNum = req.body.productNum;
+    var checked = req.body.checked;
+    User.update({"userId": userId,"cartList.productId": productId},{
+      "cartList.$.productNum": productNum,
+      "cartList.$.checked": checked
+    },(err, doc) => {
+      if (err) {
+        console.log(err);
+        res.json({
+          status: "1",
+          message: err.message,
+          result: ''
+        })
+      } else {
+        res.json({
+          status: "0",
+          message: '',
+          result: 'suc'
+        })
+      }
+    })
+  });
+
   return router;
 }
 
