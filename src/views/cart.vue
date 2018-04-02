@@ -109,8 +109,8 @@
           <div class="cart-foot-inner">
             <div class="cart-foot-l">
               <div class="item-all-check">
-                <a href="javascipt:;">
-                  <span class="checkbox-btn item-check-btn">
+                <a href="javascipt:;" @click="toggleCheckAll">
+                  <span class="checkbox-btn item-check-btn" v-bind:class="{'check':checkAllFlag}">
                       <svg class="icon icon-ok"><use xlink:href="#icon-ok"/></svg>
                   </span>
                   <span>Select all</span>
@@ -119,10 +119,10 @@
             </div>
             <div class="cart-foot-r">
               <div class="item-total">
-                Item total: <span class="total-price">500</span>
+                Item total: <span class="total-price">{{totalPrice}}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red">Checkout</a>
+                <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount==0}" @click="checkOut">Checkout</a>
               </div>
             </div>
           </div>
@@ -187,6 +187,29 @@
     mounted() {
       this.init();
     },
+    computed: {
+      checkAllFlag() {
+        return this.checkedCount == this.cartList.length;
+      },
+      checkedCount() {
+        let i =0;
+        this.cartList.forEach((item) => {
+          if (item.checked == '1') {
+            i ++
+          }
+        })
+        return i;
+      },
+      totalPrice() {
+        let money = 0;
+        this.cartList.forEach( (item) => {
+          if( item.checked == '1') {
+            money += parseFloat(item.salePrice)  * parseInt(item.productNum);
+          }
+        })
+        return money;
+      }
+    },
     methods: {
       init() {
         axios.get('/users/cartList').then((response) => {
@@ -231,6 +254,27 @@
           let res = response.data;
 
         })
+      },
+      toggleCheckAll() {
+        var flag = !this.checkAllFlag;
+        this.cartList.forEach( (item) => {
+          item.checked = flag?'1': '0';
+        })
+        axios.post('/users/editCheckAll', {
+          checkALL : flag
+        }).then((response) => {
+          let res = response.data;
+          if (res.status == '0') {
+            console.log('修改成功')
+          }
+        })
+      },
+      checkOut(){
+        if(this.checkedCount>0){
+          this.$router.push({
+            path:"/address"
+          });
+        }
       }
     }
   }

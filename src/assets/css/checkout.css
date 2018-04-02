@@ -257,6 +257,9 @@ html {
 .addr-list li .addr-set-default {
   display: none;
 }
+.addr-list li:hover .addr-set-default {
+  display: block;
+}
 
 .addr-list li .addr-set-default, .addr-list li .addr-default {
   bottom: 18px;
