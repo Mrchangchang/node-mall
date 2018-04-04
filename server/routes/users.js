@@ -265,7 +265,43 @@ function router() {
         }
       })
     }
-
+  });
+  //删除地址
+  router.post('/delAddress', (req, res, next) => {
+    "use strict";
+    var userId = req.cookies.userId,
+      addressId = req.body.addressId;
+    if (!addressId) {
+      res.json({
+        status: '1003',
+        message: "not params",
+        result: ''
+      })
+      return;
+    } else {
+      User.update({userId:userId},{
+        $pull: {
+          "addressList": {
+            "addressId": addressId
+          }
+        }
+      },(err, doc) => {
+        if (err) {
+          console.log(err);
+          res.json({
+            status: '1',
+            message: err.message,
+            result: ''
+          })
+        } else {
+          res.json({
+            status: '0',
+            message: 'suc',
+            result: ''
+          })
+        }
+      })
+    }
   });
 
   return router;

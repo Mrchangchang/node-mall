@@ -68,7 +68,7 @@
                       <dd class="tel">{{item.tel}}</dd>
                     </dl>
                     <div class="addr-opration addr-del">
-                      <a href="javascript:;" class="addr-del-btn">
+                      <a href="javascript:;" class="addr-del-btn" @click="delAddress(item)">
                         <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
                       </a>
                     </div>
@@ -125,6 +125,15 @@
           </div>
         </div>
       </div>
+      <modal :mdShow="isMdShow" @close="closeModal">
+        <p slot="message">
+          您是否确认删除此地址？
+        </p>
+        <div slot="btnGroup">
+          <a href="javascript:;" class="btn btn--m">确认</a>
+          <a href="javascript:;" class="btn btn--m" @click="isMdShow = false">取消</a>
+        </div>
+      </modal>
       <nav-footer></nav-footer>
     </div>
 </template>
@@ -141,7 +150,8 @@
       return {
         limit: 3,
         addressList: [],
-        checkIndex: 0
+        checkIndex: 0,
+        isMdShow: false
       }
     },
     computed: {
@@ -184,6 +194,12 @@
 //            this.init();
           }
         })
+      },
+      closeModal() {
+        this.isMdShow = false;
+      },
+      delAddress() {
+        this.isMdShow = true;
       }
     }
 
