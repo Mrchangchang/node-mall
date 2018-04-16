@@ -61,7 +61,7 @@
               <div class="addr-list">
                 <ul>
                   <li v-for="(item, index) in addressListFilter"  v-bind:class="{'check': checkIndex == index}"
-                      @click="checkIndex = index">
+                      @click="checkIndex = index;selectedAddrId= item.addressId">
                     <dl>
                       <dt>{{item.userName}}</dt>
                       <dd class="address">{{item.streetName}}</dd>
@@ -120,7 +120,7 @@
               </div>
             </div>
             <div class="next-btn-wrap">
-              <a class="btn btn--m btn--red">Next</a>
+              <router-link class="btn btn--m btn--red" :to ="{path: 'orderConfirm',query:{'addressId': selectedAddrId}}">Next</router-link>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@
           您是否确认删除此地址？
         </p>
         <div slot="btnGroup">
-          <a href="javascript:;" class="btn btn--m">确认</a>
+          <a href="javascript:;" class="btn btn--m" @click="delAddressConfirm(addressId)">确认</a>
           <a href="javascript:;" class="btn btn--m" @click="isMdShow = false">取消</a>
         </div>
       </modal>
@@ -150,8 +150,10 @@
       return {
         limit: 3,
         addressList: [],
+        selectedAddrList: '',
         checkIndex: 0,
-        isMdShow: false
+        isMdShow: false,
+        addressId: ''
       }
     },
     computed: {
@@ -198,8 +200,21 @@
       closeModal() {
         this.isMdShow = false;
       },
-      delAddress() {
+      delAddressConfirm(addressId) {
         this.isMdShow = true;
+        this.addressId = addressId;
+      },
+      delAddress() {
+        axios.post('/users/delAddress',{
+          addressId: this.addressId
+        }).then((response)=> {
+          let res =response.data;
+          if (res.status == '0' ) {
+            console.log('删除成功');
+            this.isMdShow = false;
+            this.init();
+          }
+        })
       }
     }
 

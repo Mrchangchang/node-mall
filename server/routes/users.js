@@ -1,5 +1,6 @@
 var express = require('express');
-var User = require('./../modules/user')
+var User = require('./../modules/user');
+require('../util/util')
 
 /* GET users listing. */
 function router() {
@@ -304,6 +305,64 @@ function router() {
     }
   });
 
+  //创建订单
+  router.post('/payMent', (req, res, next) => {
+    "use strict";
+    var userId = req.cookies.userId,
+        orderTotal = req.body.orderTotal,
+        addressId = req.body.adddressId;
+    User.findOne({userId: userId}, (err, doc) => {
+      if (err) {
+        console.log(err);
+        res.json({
+          status: '1',
+          message: err.message,
+          result: ''
+        })
+      } else {
+        let address;
+        //获取用户的地址信息
+        doc.addressList.forEach((item) => {
+          if (addressId == item.addressId) {
+            address = item;
+          }
+        })
+        //获取用户购买的商品
+        let goodsList=[];
+        doc.cartList.forEach((item) => {
+          if (item.checked =='1') {
+            goodsList.push(item);
+          }
+        })
+        let order = {
+          orderId: '',
+          orderTotal,
+          addressInfo: address,
+          orderStatus: 1,
+          createDate: ''
+        }
+        doc.orderList.push(order);
+        doc.save((err, doc1) => {
+          if (err) {
+            res.json({
+              status: '1',
+              message: err.message,
+              result: ''
+            })
+          } else {
+            res.json({
+              status: '0',
+              message: '',
+              result: {
+                orderId: order.orderId,
+                orderTotal: order.orderTotal
+              }
+            })
+          }
+        })
+      }
+    })
+  })
   return router;
 }
 
