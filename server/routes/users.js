@@ -334,8 +334,15 @@ function router() {
             goodsList.push(item);
           }
         })
+        var platform = '622';
+        var r1 = Math.floor(Math.random()*10);
+        var r2 = Math.floor(Math.random()*10);
+
+        var sysDate = new Date().Format('yyyyMMddhhmmss');
+        var createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+        var orderId = platform+r1+sysDate+r2;
         let order = {
-          orderId: '',
+          orderId: orderId,
           orderTotal,
           addressInfo: address,
           orderStatus: 1,
@@ -360,6 +367,55 @@ function router() {
             })
           }
         })
+      }
+    })
+  });
+  //根据订单ID查询订单详情
+  router.get("/orderDetail",(req, res, next) => {
+    "use strict";
+    let userId = req.cookies.userId;
+    let orderId = req.param("orderId");
+    User.findOne({userId: userId},(err, userInfo) => {
+      if (err) {
+        res.json({
+          status: '1',
+          message: err.message,
+          result: ''
+        })
+      } else {
+        let orderList = userInfo.orderList;
+        if (orderList.length) {
+
+          let orderTotal = 0;
+          orderList.forEach(item => {
+            if (item.orderId == orderId) {
+              orderTotal = item.orderTotal;
+            }
+          });
+          if (orderTotal>0) {
+            res.json({
+              status: '0',
+              message: '',
+              result: {
+                orderId: orderId,
+                orderTotal: orderTotal
+              }
+            })
+          } else {
+            res.json({
+              status: '12002',
+              message: "无此订单",
+              result: ''
+            });
+          }
+
+        } else {
+          res.json({
+            status: '12001',
+            message:"当前用户未创建订单",
+            result: ''
+          });
+        }
       }
     })
   })
