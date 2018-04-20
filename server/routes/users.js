@@ -66,6 +66,23 @@ function router() {
       result: ""
     })
   });
+
+  router.get("/checkLogin", function (req,res,next) {
+    if(req.cookies.userId){
+      res.json({
+        status:'0',
+        msg:'',
+        result:req.cookies.userName || ''
+      });
+    }else{
+      res.json({
+        status:'1',
+        msg:'未登录',
+        result:''
+      });
+    }
+  });
+
   //购物车列表
   router.get('/cartList', (req, res) => {
     "use strict";
@@ -87,8 +104,33 @@ function router() {
         }
       }
     })
-  })
+  });
 
+  //查询购物车数量
+  router.get("/getCartCount", (req, res) => {
+    "use strict";
+    let userId = req.cookies.userId;
+    User.findOne({userId: userId}, (err,doc) => {
+      if (err) {
+        res.json({
+          status: "1",
+          message: err.message,
+          result: ''
+        })
+      } else {
+        let cartList = doc.cartList;
+        let cartCount = 0;
+        cartList.forEach( product => {
+          cartCount += parseInt(product.productNum);
+        })
+        res.json({
+          status: "0",
+          message: "",
+          result: cartCount
+        })
+      }
+    })
+  })
   //购物车删除
   router.post('/cart/del',(req, res, next) => {
     "use strict";
