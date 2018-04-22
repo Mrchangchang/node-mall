@@ -22,7 +22,7 @@ const store = new Vuex.Store({
       state.nickName = nickName;
     },
     updateCartCount(state, cartCount) {
-      state.cartCount = cartCount;
+      state.cartCount += cartCount;
     }
   }
 })
