@@ -55,7 +55,7 @@
     },
     mounted() {
       if (!this.orderId) {
-        return;
+        return false;
       }
       axios.get("/users/orderDetail",{
         params: {

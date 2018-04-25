@@ -12,6 +12,7 @@ Vue.config.productionTip = false
 
 Vue.filter(currency);
 Vue.use(Vuex);
+
 const store = new Vuex.Store({
   state: {
     nickName: '',
@@ -23,6 +24,9 @@ const store = new Vuex.Store({
     },
     updateCartCount(state, cartCount) {
       state.cartCount += cartCount;
+    },
+    initCartCount(state,cartCount) {
+      state.cartCount = cartCount;
     }
   }
 })

@@ -5,7 +5,7 @@
   "author": "mrchangchang <78172670@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server  --inline --progress --config build/webpack.dev.conf.js",
     "start": "node ./server/bin/www",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
